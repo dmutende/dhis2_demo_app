@@ -3,13 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <script src="js/lib/store.js"></script>
-    <script src="js/lib/jquery-3.2.1.min.js"></script>
 
+    <link rel="stylesheet" href="css/elon.css">
+
+    <script src="js/lib/jquery-3.2.1.min.js"></script>
+    <script src="js/elon/elon-utils.min.js"></script>
+    <!--<script src="js/elon/elon.js"></script>-->
+    <script src="js/elon/global.js"></script>
+    <script src="js/elon/dhis2-api-utils.js"></script>
 </head>
 <body>
 
 <input type="button" value="GET" onclick="getDHISData()">
+<span id="loader"></span>
+<br>
+<hr>
+<p id="res"></p>
 
 <script type="text/javascript">
 
@@ -18,36 +27,29 @@
     var auth = 'Bearer de4298c9-4f5a-4130-82d9-235de54e813b';
 
     function getDHISData() {
-        //var store = require('store');
-        alert(JSON.stringify(store.get('data')));
-    }
-
-    $( document ).ready(function() {
-
-        $.ajax({
-            /*async : true,*/
-            url:"http://test.hiskenya.org/api/26/indicators.json?order=shortName:desc/translations", // the endpoint
-            type : "GET", // http method
-            dataType: "json",
-            headers: {
-                "Authorization": "Bearer de4298c9-4f5a-4130-82d9-235de54e813b"
+        var ajaxConfig = {
+            async: true,
+            url:"http://test.hiskenya.org/api/26/dataElements.json",
+            method:"GET",
+            data:{
+                order:"shortName:desc",
+                paging:"false"
             },
-            /*data : { order: "shortName:desc"},*/ // data sent with the post request
-            // handle a successful response
-            success : function(response) {
-                //document.write(JSON.stringify(response));
-                //var store = require('store');
-                store.set('data', {json: response});
-                console.log(typeof(Storage));
+            dataType:"json",
+            contentType:CONTENT_TYPE_APPLICATION_DEFAULT,
+            "headers": {
+                "Authorization":setAuth(AUTHORIZATION_BEARER,"7000074a-57d1-463b-9174-189ad685b613")
             },
-            // handle a non-successful response
-            error : function(xhr,errmsg,err) {
-                // add the error to the dom
-                console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
-                document.write(err+"("+errmsg+")");
+            loaderId:"loader",
+            loaderSize: 20,
+            callback: function (response, loaderId) {
+                Storage.write("data", response);
+                $('#res').html(JSON.stringify(Storage.read("data")));
+                $('#'+loaderId).html("");
             }
-        });
-    });
+        };
+        dhis2ApiPost(ajaxConfig);
+    }
 </script>
 
 </body>
