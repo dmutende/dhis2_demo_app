@@ -42,10 +42,10 @@
             },
             loaderId:"loader",
             loaderSize: 20,
-            callback: function (response, loaderId) {
+            callback: function (response, ajaxConfig) {
                 Storage.write("data", response);
                 $('#res').html(JSON.stringify(Storage.read("data")));
-                $('#'+loaderId).html("");
+                $('#'+ajaxConfig.loaderId).html("");
             }
         };
         dhis2ApiPost(ajaxConfig);
