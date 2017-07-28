@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="js/lib/store.js"></script>
+    <script src="js/lib/jquery-3.2.1.min.js"></script>
+
+</head>
+<body>
+
+<input type="button" value="GET" onclick="getDHISData()">
+
+<script type="text/javascript">
+
+    var u = '103';
+    var p = 'custom-secret-elon-api-123456789asdf';
+    var auth = 'Bearer de4298c9-4f5a-4130-82d9-235de54e813b';
+
+    function getDHISData() {
+        //var store = require('store');
+        alert(JSON.stringify(store.get('data')));
+    }
+
+    $( document ).ready(function() {
+
+        $.ajax({
+            /*async : true,*/
+            url:"http://test.hiskenya.org/api/26/indicators.json?order=shortName:desc/translations", // the endpoint
+            type : "GET", // http method
+            dataType: "json",
+            headers: {
+                "Authorization": "Bearer de4298c9-4f5a-4130-82d9-235de54e813b"
+            },
+            /*data : { order: "shortName:desc"},*/ // data sent with the post request
+            // handle a successful response
+            success : function(response) {
+                //document.write(JSON.stringify(response));
+                //var store = require('store');
+                store.set('data', {json: response});
+                console.log(typeof(Storage));
+            },
+            // handle a non-successful response
+            error : function(xhr,errmsg,err) {
+                // add the error to the dom
+                console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                document.write(err+"("+errmsg+")");
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
