@@ -7,10 +7,11 @@
     <link rel="stylesheet" href="css/elon.css">
 
     <script src="js/lib/jquery-3.2.1.min.js"></script>
-    <script src="js/elon/elon-utils.min.js"></script>
-    <!--<script src="js/elon/elon.js"></script>-->
+    <script src="js/lib/localforage.js"></script>
     <script src="js/elon/global.js"></script>
     <script src="js/elon/dhis2-api-utils.js"></script>
+    <!--<script src="js/elon/elon-utils.min.js"></script>-->
+    <script src="js/elon/elon.js"></script>
 </head>
 <body>
 
@@ -25,27 +26,36 @@
     var u = '103';
     var p = 'custom-secret-elon-api-123456789asdf';
     var auth = 'Bearer de4298c9-4f5a-4130-82d9-235de54e813b';
+    var aLotOfData = "test.hiskenya.org/api/metadata?assumeTrue=false&organisationUnits=true&lastUpdated=2014-08-01";
+    var littleData = "test.hiskenya.org/api/26/indicators.json?order=shortName:desc";
 
     function getDHISData() {
         var ajaxConfig = {
             async: true,
-            url:"http://test.hiskenya.org/api/26/dataElements.json",
+            url:"http://test.hiskenya.org/api/metadata",
             method:"GET",
             data:{
-                order:"shortName:desc",
-                paging:"false"
+                assumeTrue:"false",
+                organisationUnits:"true",
+                lastUpdated:"2014-08-01"
+                /*order: 'shortName:desc'*/
             },
             dataType:"json",
             contentType:CONTENT_TYPE_APPLICATION_DEFAULT,
             "headers": {
-                "Authorization":setAuth(AUTHORIZATION_BEARER,"7000074a-57d1-463b-9174-189ad685b613")
+                "Authorization":setAuth(AUTHORIZATION_BEARER,"372d83e8-2fd0-46dd-94bb-a5f337b74833")
             },
             loaderId:"loader",
             loaderSize: 20,
             callback: function (response, ajaxConfig) {
+                //Storage.delete("data");
                 Storage.write("data", response);
-                $('#res').html(JSON.stringify(Storage.read("data")));
-                $('#'+ajaxConfig.loaderId).html("");
+                //alert(JSON.stringify(Storage.read("data")));
+                Storage.read("data", ajaxConfig, function (res,ajaxConfig) {
+                    $('#res').html(JSON.stringify(res));
+                    $('#'+ajaxConfig.loaderId).html("");
+                });
+
             }
         };
         dhis2ApiPost(ajaxConfig);

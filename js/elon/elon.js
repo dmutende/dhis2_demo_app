@@ -1,19 +1,33 @@
 //Created by elon @Jul 28, 2017 : 1935Hrs
 
+/* -----------------------------  Request HEADERS  ----------------------------- */
+// Provides Authorization Header Content
+function setAuth(authType, accessToken){
+    if(authType===AUTHORIZATION_BASIC){
+        return AUTHORIZATION_BASIC+WHITE_SPACE+Base64.encode(authType)
+    }else if(authType===AUTHORIZATION_BEARER){
+        return AUTHORIZATION_BEARER+WHITE_SPACE+accessToken
+    }else{return accessToken}
+}
+/* ----------------------------- End Of  Request HEADERS  ----------------------------- */
+
 /* -----------------------------  Storage  ----------------------------- */
 // Storage Access Object
 var Storage = {
-    write:function(key,value) {
-        store.set(key,value)
+    write:function(k,v) {
+        store.setItem(k,v);
     },
-    read:function(key){
-        return store.get(key)
+    read:function(k,ajaxConfig,callback){
+        store.getItem(k, function(error, value){
+            callback(value, ajaxConfig);
+        });
     },
-    delete:function(key){
-        store.remove(key)
+    delete:function(k){
+        store.removeItem(k);
+        console.log("Key: "+k+" deleted successfully");
     },
     clear:function(){
-        store.clearAll()
+        store.clear();
     }
 };
 /* -----------------------------  End Of Storage  ----------------------------- */
@@ -42,7 +56,7 @@ function dhis2ApiPost(ajaxConfig){
         headers: ajaxConfig.headers,
         success:function (response) {
             console.log("dhis2ApiPost successful");
-            ajaxConfig.callback(response, ajaxConfig.loaderId);
+            ajaxConfig.callback(response, ajaxConfig);
         },
         error:function (xhr, errMsg, err) {
             console.log("Error XHR @ dhis2ApiPost: "+xhr.status + ": " + xhr.responseText);

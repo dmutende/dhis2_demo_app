@@ -25,5 +25,17 @@ var DATA_TYPE = 'json';
 var AUTHORIZATION_BASIC = "Basic";
 var AUTHORIZATION_BEARER = "Bearer";
 
-var loader20px = "" +
-    "<svg class='spinner' width='20px' height='20px' viewBox='0 0 66 66' xmlns='http://www.w3.org/2000/svg'><circle class='path' fill='none' stroke-width='6' stroke-linecap='round' cx='33' cy='33' r='30'></circle></svg>";
+//
+// Define your database
+//
+localforage.config({
+    driver      : localforage.WEBSQL, // Force WebSQL; same as using setDriver()
+    name        : 'elon',
+    version     : 1.0,
+    size        : 104857600, // Size of database, in bytes. WebSQL-only for now.
+    storeName   : 'storage', // Should be alphanumeric, with underscores.
+    description : 'some description'
+});
+var store = localforage.createInstance({
+    name: "storageInstance"
+});
